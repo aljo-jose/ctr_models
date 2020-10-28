@@ -23,6 +23,7 @@ from torchfm.model.wd import WideAndDeepModel
 from torchfm.model.xdfm import ExtremeDeepFactorizationMachineModel
 from torchfm.model.afn import AdaptiveFactorizationNetwork
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def get_dataset(name, path):
     if name == 'movielens1M':
@@ -160,14 +161,20 @@ def main(dataset_name,
     model = get_model(model_name, dataset).to(device)
     criterion = torch.nn.BCELoss()
     optimizer = torch.optim.Adam(params=model.parameters(), lr=learning_rate, weight_decay=weight_decay)
-    early_stopper = EarlyStopper(num_trials=2, save_path=f'{save_dir}/{model_name}.pt')
+    #early_stopper = EarlyStopper(num_trials=2, save_path=f'{save_dir}/{model_name}.pt')
+
     for epoch_i in range(epoch):
         train(model, optimizer, train_data_loader, criterion, device)
         auc = test(model, valid_data_loader, device)
         print('epoch:', epoch_i, 'validation: auc:', auc)
-        if not early_stopper.is_continuable(model, auc):
-            print(f'validation: best auc: {early_stopper.best_accuracy}')
-            break
+        # if not early_stopper.is_continuable(model, auc):
+        #     print(f'validation: best auc: {early_stopper.best_accuracy}')
+        #     break
+    x = train_dataset.__getitem__(1) # sample input
+    m = torch.jit.trace(model,torch.LongTensor(x[0]))
+    torch.jit.save(m, f'{save_dir}/{model_name}.jit.pt')
+    torch.save(model, f'{save_dir}/{model_name}.pt')
+
     auc = test(model, test_data_loader, device)
     print(f'test auc: {auc}')
 
@@ -177,13 +184,13 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_name', default='criteo')
-    parser.add_argument('--dataset_path', help='criteo/train.txt, avazu/train, or ml-1m/ratings.dat')
-    parser.add_argument('--model_name', default='afi')
-    parser.add_argument('--epoch', type=int, default=100)
+    parser.add_argument('--dataset_path', default='../ctr_data/criteo/train.txt', help='criteo/train.txt, avazu/train, or ml-1m/ratings.dat')
+    parser.add_argument('--model_name', default='wd')
+    parser.add_argument('--epoch', type=int, default=10)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--batch_size', type=int, default=2048)
     parser.add_argument('--weight_decay', type=float, default=1e-6)
-    parser.add_argument('--device', default='cuda:0')
+    parser.add_argument('--device', default=device) #'cuda:0'
     parser.add_argument('--save_dir', default='chkpt')
     args = parser.parse_args()
     main(args.dataset_name,
