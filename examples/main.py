@@ -54,7 +54,7 @@ def get_model(name, dataset):
     elif name == 'fnn':
         return FactorizationSupportedNeuralNetworkModel(field_dims, embed_dim=16, mlp_dims=(16, 16), dropout=0.2)
     elif name == 'wd':
-        return WideAndDeepModel(field_dims, embed_dim=16, mlp_dims=(16, 16), dropout=0.2)
+        return WideAndDeepModel(field_dims, embed_dim=32, mlp_dims=(1024,512,256), dropout=0.2) # change mlp_dims (16, 16)
     elif name == 'ipnn':
         return ProductNeuralNetworkModel(field_dims, embed_dim=16, mlp_dims=(16,), method='inner', dropout=0.2)
     elif name == 'opnn':
