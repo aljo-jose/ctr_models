@@ -171,8 +171,7 @@ def main(dataset_name,
         #     print(f'validation: best auc: {early_stopper.best_accuracy}')
         #     break
     x = train_dataset.__getitem__(1) # sample input
-    x = torch.LongTensor(x).to(device)
-    m = torch.jit.trace(model,torch.LongTensor(x[0]))
+    m = torch.jit.trace(model,torch.LongTensor(x[0]).to(device))
     torch.jit.save(m, f'{save_dir}/{model_name}.jit.pt')
     torch.save(model, f'{save_dir}/{model_name}.pt')
 
