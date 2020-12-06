@@ -60,7 +60,7 @@ def get_model(name, dataset):
     elif name == 'opnn':
         return ProductNeuralNetworkModel(field_dims, embed_dim=16, mlp_dims=(16,), method='outer', dropout=0.2)
     elif name == 'dcn':
-        return DeepCrossNetworkModel(field_dims, embed_dim=16, num_layers=3, mlp_dims=(16, 16), dropout=0.2)
+        return DeepCrossNetworkModel(field_dims, embed_dim=32, num_layers=3, mlp_dims=(256,128,32), dropout=0.2)
     elif name == 'nfm':
         return NeuralFactorizationMachineModel(field_dims, embed_dim=64, mlp_dims=(64,), dropouts=(0.2, 0.2))
     elif name == 'ncf':
@@ -72,12 +72,12 @@ def get_model(name, dataset):
     elif name == 'fnfm':
         return FieldAwareNeuralFactorizationMachineModel(field_dims, embed_dim=4, mlp_dims=(64,), dropouts=(0.2, 0.2))
     elif name == 'dfm':
-        return DeepFactorizationMachineModel(field_dims, embed_dim=16, mlp_dims=(16, 16), dropout=0.2)
+        return DeepFactorizationMachineModel(field_dims, embed_dim=32, mlp_dims=(256,128,32), dropout=0.2) #16,16
     elif name == 'xdfm':
         return ExtremeDeepFactorizationMachineModel(
-            field_dims, embed_dim=16, cross_layer_sizes=(16, 16), split_half=False, mlp_dims=(16, 16), dropout=0.2)
+            field_dims, embed_dim=32, cross_layer_sizes=(32, 32), split_half=False, mlp_dims=(256,128,32), dropout=0.2)
     elif name == 'afm':
-        return AttentionalFactorizationMachineModel(field_dims, embed_dim=16, attn_size=16, dropouts=(0.2, 0.2))
+        return AttentionalFactorizationMachineModel(field_dims, embed_dim=32, attn_size=32, dropouts=(0.2, 0.2))
     elif name == 'afi':
         return AutomaticFeatureInteractionModel(
              field_dims, embed_dim=16, atten_embed_dim=64, num_heads=2, num_layers=3, mlp_dims=(400, 400), dropouts=(0, 0, 0))
@@ -185,8 +185,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset_name', default='criteo')
     parser.add_argument('--dataset_path', default='../ctr_data/criteo/train.txt', help='criteo/train.txt, avazu/train, or ml-1m/ratings.dat')
-    parser.add_argument('--model_name', default='wd')
-    parser.add_argument('--epoch', type=int, default=10)
+    parser.add_argument('--model_name', default='dcn')
+    parser.add_argument('--epoch', type=int, default=2)
     parser.add_argument('--learning_rate', type=float, default=0.001)
     parser.add_argument('--batch_size', type=int, default=2048)
     parser.add_argument('--weight_decay', type=float, default=1e-6)

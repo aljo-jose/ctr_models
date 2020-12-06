@@ -1,7 +1,7 @@
 import torch
 
 from torchfm.layer import FeaturesEmbedding, FeaturesLinear, AttentionalFactorizationMachine
-
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class AttentionalFactorizationMachineModel(torch.nn.Module):
     """
@@ -22,5 +22,6 @@ class AttentionalFactorizationMachineModel(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        x = torch.LongTensor(x).to(device)
         x = self.linear(x) + self.afm(self.embedding(x))
         return torch.sigmoid(x.squeeze(1))

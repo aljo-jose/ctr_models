@@ -1,7 +1,7 @@
 import torch
-
 from torchfm.layer import FeaturesLinear, MultiLayerPerceptron, FeaturesEmbedding
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class WideAndDeepModel(torch.nn.Module):
     """
@@ -22,6 +22,7 @@ class WideAndDeepModel(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        x = torch.LongTensor(x).to(device)
         embed_x = self.embedding(x)
         x = self.linear(x) + self.mlp(embed_x.view(-1, self.embed_output_dim))
         return torch.sigmoid(x.squeeze(1))

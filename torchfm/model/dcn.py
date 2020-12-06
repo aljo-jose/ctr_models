@@ -1,7 +1,7 @@
 import torch
 
 from torchfm.layer import FeaturesEmbedding, CrossNetwork, MultiLayerPerceptron
-
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class DeepCrossNetworkModel(torch.nn.Module):
     """
@@ -23,6 +23,7 @@ class DeepCrossNetworkModel(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
+        x = torch.LongTensor(x).to(device)
         embed_x = self.embedding(x).view(-1, self.embed_output_dim)
         x_l1 = self.cn(embed_x)
         h_l2 = self.mlp(embed_x)
