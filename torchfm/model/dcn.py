@@ -23,7 +23,8 @@ class DeepCrossNetworkModel(torch.nn.Module):
         """
         :param x: Long tensor of size ``(batch_size, num_fields)``
         """
-        x = torch.LongTensor(x).to(device)
+        if not x.is_cuda:
+            x = torch.LongTensor(x).to(device)
         embed_x = self.embedding(x).view(-1, self.embed_output_dim)
         x_l1 = self.cn(embed_x)
         h_l2 = self.mlp(embed_x)
